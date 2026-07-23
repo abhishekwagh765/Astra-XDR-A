@@ -34,7 +34,7 @@ jobs:
         run: docker build -t astra-xdr:v1 ./app
 
       - name: Run Trivy Vulnerability Scanner
-        uses: aquasecurity/trivy-action@v0.28.0
+        uses: aquasecurity/trivy-action@v0.33.1
         with:
           image-ref: "astra-xdr:v1"
           format: "table"
