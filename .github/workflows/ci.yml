@@ -4,13 +4,17 @@ on:
   push:
     branches:
       - main
-
   pull_request:
     branches:
       - main
 
 jobs:
-  build:
+
+  # ==========================================
+  # JOB 1 - STATIC APPLICATION SECURITY TESTING
+  # ==========================================
+  sast:
+    name: Semgrep SAST Scan
     runs-on: ubuntu-latest
 
     steps:
@@ -22,18 +26,27 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install Python Dependencies
+      - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r app/requirements.txt
-
-      - name: Install Semgrep
-        run: |
           pip install semgrep
 
       - name: Run Semgrep Scan
         run: |
           semgrep --config=p/owasp-top-ten app/
+
+  # ==========================================
+  # JOB 2 - BUILD & CONTAINER SECURITY
+  # ==========================================
+  container-security:
+    name: Docker Build & Trivy Scan
+    needs: sast
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
       - name: Build Docker Image
         run: |
@@ -48,3 +61,16 @@ jobs:
           ignore-unfixed: true
           vuln-type: "os,library"
           severity: "CRITICAL,HIGH"
+
+  # ==========================================
+  # JOB 3 - PUSH TO AMAZON ECR (NEXT PHASE)
+  # ==========================================
+  push-to-ecr:
+    name: Push Docker Image to Amazon ECR
+    needs: container-security
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Placeholder
+        run: |
+          echo "Amazon ECR integration will be added in the next phase."
