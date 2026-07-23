@@ -1,14 +1,16 @@
-from flask import Flask, jsonify, request
-import subprocess
+from flask import Flask, jsonify
 
 app = Flask(__name__)
+
 
 @app.route("/")
 def home():
     return jsonify({
-        "message": "Welcome to ASTRA-XDR",
-        "status": "Running"
+        "application": "ASTRA-XDR",
+        "status": "Running",
+        "message": "Welcome to ASTRA-XDR DevSecOps Platform"
     })
+
 
 @app.route("/health")
 def health():
@@ -16,18 +18,15 @@ def health():
         "status": "Healthy"
     })
 
-# -------------------------------
-# TEST ENDPOINT (INTENTIONALLY VULNERABLE)
-# Used only to verify Semgrep CI
-# Remove after testing.
-# -------------------------------
-@app.route("/test")
-def test():
-    cmd = request.args.get("cmd")
-    subprocess.run(cmd, shell=True)
+
+@app.route("/about")
+def about():
     return jsonify({
-        "message": "Command executed"
+        "project": "ASTRA-XDR",
+        "version": "1.0.0",
+        "framework": "Flask"
     })
 
+
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.run()
