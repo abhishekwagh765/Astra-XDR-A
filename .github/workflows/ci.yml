@@ -2,20 +2,15 @@ name: ASTRA-XDR CI
 
 on:
   push:
-    branches:
-      - main
-
+    branches: [main]
   pull_request:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-
       - name: Checkout Repository
         uses: actions/checkout@v4
 
@@ -29,6 +24,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r app/requirements.txt
 
+      - name: Install Semgrep
+        run: pip install semgrep
+
+      - name: Run Semgrep Scan
+        run: semgrep --config=p/owasp-top-ten app/
+
       - name: Build Docker Image
-        run: |
-          docker build -t astra-xdr:v1 ./app
+        run: docker build -t astra-xdr:v1 ./app
