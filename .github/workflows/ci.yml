@@ -40,7 +40,7 @@ jobs:
           docker build -t astra-xdr:v1 ./app
 
       - name: Install Trivy
-        uses: aquasecurity/setup-trivy@v0.2.2
+        uses: aquasecurity/setup-trivy@master
 
       - name: Scan Docker Image
         run: |
