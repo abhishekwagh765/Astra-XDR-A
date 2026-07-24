@@ -1,10 +1,13 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, jsonify
 
 from collectors.cluster import get_cluster_info
 from collectors.pods import get_all_pods
 from detectors.pod_health import calculate_risk
 
 app = Flask(__name__)
+
+# Store latest Falco alerts (in memory)
+falco_events = []
 
 
 @app.route("/")
@@ -25,13 +28,14 @@ def dashboard():
     return render_template(
         "index.html",
         cluster=cluster,
-        pods=pods
+        pods=pods,
+        falco_events=falco_events
     )
 
 
 @app.route("/api/cluster")
 def cluster_api():
-    return get_cluster_info()
+    return jsonify(get_cluster_info())
 
 
 @app.route("/api/pods")
@@ -44,7 +48,48 @@ def pods_api():
         pod["risk"] = result["risk"]
         pod["reason"] = result["reason"]
 
-    return pods
+    return jsonify(pods)
+
+
+# ------------------------------------
+# Receive alerts from Falcosidekick
+# ------------------------------------
+@app.route("/api/falco/events", methods=["POST"])
+def receive_falco_events():
+
+    global falco_events
+
+    event = request.get_json()
+
+    if event:
+        falco_events.insert(0, event)
+
+        # Keep only latest 50 alerts
+        falco_events = falco_events[:50]
+
+        print("\n========== FALCO ALERT ==========")
+        print(event)
+        print("=================================\n")
+
+    return jsonify({
+        "status": "received"
+    })
+
+
+# ------------------------------------
+# API to fetch alerts
+# ------------------------------------
+@app.route("/api/falco")
+def get_falco_events():
+
+    return jsonify(falco_events)
+
+
+@app.route("/health")
+def health():
+    return jsonify({
+        "status": "healthy"
+    })
 
 
 if __name__ == "__main__":

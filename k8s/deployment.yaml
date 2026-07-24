@@ -1,11 +1,12 @@
 apiVersion: apps/v1
 kind: Deployment
+
 metadata:
   name: astra-xdr
   namespace: astra
 
 spec:
-  replicas: 2
+  replicas: 1
 
   selector:
     matchLabels:
