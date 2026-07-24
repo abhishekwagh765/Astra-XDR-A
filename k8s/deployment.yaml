@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: astra-xdr
+  namespace: astra
+
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: astra-xdr
+
+  template:
+    metadata:
+      labels:
+        app: astra-xdr
+
+    spec:
+      containers:
+      - name: astra-xdr
+        image: mrrobot7781/astra-xdr:latest
+        imagePullPolicy: Always
+
+        ports:
+        - containerPort: 5000
