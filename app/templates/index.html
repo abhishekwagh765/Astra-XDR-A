@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ASTRA-XDR Dashboard</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<nav class="navbar navbar-dark bg-dark shadow">
+    <div class="container-fluid">
+        <span class="navbar-brand mb-0 h1">
+            🛡️ ASTRA-XDR Dashboard
+        </span>
+    </div>
+</nav>
+
+
+<div class="container mt-4">
+
+    <!-- Cluster Status -->
+
+    <div class="alert alert-success text-center">
+
+        <h4>
+
+            Cluster Status :
+            {{ cluster.status }}
+
+        </h4>
+
+    </div>
+
+
+    <!-- Cards -->
+
+    <div class="row g-4">
+
+        <div class="col-md-3">
+
+            <div class="card shadow card-box">
+
+                <div class="card-body text-center">
+
+                    <h5>🖥 Nodes</h5>
+
+                    <h2>{{ cluster.nodes }}</h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-3">
+
+            <div class="card shadow card-box">
+
+                <div class="card-body text-center">
+
+                    <h5>📦 Pods</h5>
+
+                    <h2>{{ cluster.pods }}</h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-3">
+
+            <div class="card shadow card-box">
+
+                <div class="card-body text-center">
+
+                    <h5>🌐 Services</h5>
+
+                    <h2>{{ cluster.services }}</h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-3">
+
+            <div class="card shadow card-box">
+
+                <div class="card-body text-center">
+
+                    <h5>📁 Namespaces</h5>
+
+                    <h2>{{ cluster.namespaces }}</h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Pod Table -->
+
+    <div class="card shadow mt-5">
+
+        <div class="card-header bg-primary text-white">
+
+            <h4>Pod Health</h4>
+
+        </div>
+
+        <div class="card-body">
+
+            <table class="table table-hover align-middle">
+
+                <thead class="table-dark">
+
+                    <tr>
+
+                        <th>Pod Name</th>
+
+                        <th>Namespace</th>
+
+                        <th>Status</th>
+
+                        <th>Restarts</th>
+
+                        <th>Risk</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                {% for pod in pods %}
+
+                <tr>
+
+                    <td>{{ pod.name }}</td>
+
+                    <td>{{ pod.namespace }}</td>
+
+                    <td>
+
+                        {% if pod.status == "Running" %}
+
+                            <span class="badge bg-success">
+
+                                Running
+
+                            </span>
+
+                        {% elif pod.status == "Pending" %}
+
+                            <span class="badge bg-warning text-dark">
+
+                                Pending
+
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-secondary">
+
+                                {{ pod.status }}
+
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+                    <td>
+
+                        {{ pod.restarts }}
+
+                    </td>
+
+                    <td>
+
+                        {% if pod.risk == "LOW" %}
+
+                            <span class="badge bg-success">
+
+                                LOW
+
+                            </span>
+
+                        {% elif pod.risk == "MEDIUM" %}
+
+                            <span class="badge bg-warning text-dark">
+
+                                MEDIUM
+
+                            </span>
+
+                        {% elif pod.risk == "HIGH" %}
+
+                            <span class="badge bg-danger">
+
+                                HIGH
+
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-info">
+
+                                {{ pod.risk }}
+
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <footer class="text-center mt-5 mb-3">
+
+        <hr>
+
+        <p>
+
+            ASTRA-XDR v1.0
+
+            <br>
+
+            Built with ❤️ using Flask, Kubernetes & Docker
+
+        </p>
+
+    </footer>
+
+
+</div>
+
+</body>
+
+</html>
