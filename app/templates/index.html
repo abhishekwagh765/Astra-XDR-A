@@ -24,7 +24,6 @@
     </div>
 </nav>
 
-
 <div class="container mt-4">
 
     <!-- Cluster Status -->
@@ -39,7 +38,6 @@
         </h4>
 
     </div>
-
 
     <!-- Cards -->
 
@@ -61,7 +59,6 @@
 
         </div>
 
-
         <div class="col-md-3">
 
             <div class="card shadow card-box">
@@ -78,7 +75,6 @@
 
         </div>
 
-
         <div class="col-md-3">
 
             <div class="card shadow card-box">
@@ -94,7 +90,6 @@
             </div>
 
         </div>
-
 
         <div class="col-md-3">
 
@@ -113,7 +108,6 @@
         </div>
 
     </div>
-
 
     <!-- Pod Table -->
 
@@ -134,13 +128,9 @@
                     <tr>
 
                         <th>Pod Name</th>
-
                         <th>Namespace</th>
-
                         <th>Status</th>
-
                         <th>Restarts</th>
-
                         <th>Risk</th>
 
                     </tr>
@@ -161,71 +151,39 @@
 
                         {% if pod.status == "Running" %}
 
-                            <span class="badge bg-success">
-
-                                Running
-
-                            </span>
+                            <span class="badge bg-success">Running</span>
 
                         {% elif pod.status == "Pending" %}
 
-                            <span class="badge bg-warning text-dark">
-
-                                Pending
-
-                            </span>
+                            <span class="badge bg-warning text-dark">Pending</span>
 
                         {% else %}
 
-                            <span class="badge bg-secondary">
-
-                                {{ pod.status }}
-
-                            </span>
+                            <span class="badge bg-secondary">{{ pod.status }}</span>
 
                         {% endif %}
 
                     </td>
 
-                    <td>
-
-                        {{ pod.restarts }}
-
-                    </td>
+                    <td>{{ pod.restarts }}</td>
 
                     <td>
 
                         {% if pod.risk == "LOW" %}
 
-                            <span class="badge bg-success">
-
-                                LOW
-
-                            </span>
+                            <span class="badge bg-success">LOW</span>
 
                         {% elif pod.risk == "MEDIUM" %}
 
-                            <span class="badge bg-warning text-dark">
-
-                                MEDIUM
-
-                            </span>
+                            <span class="badge bg-warning text-dark">MEDIUM</span>
 
                         {% elif pod.risk == "HIGH" %}
 
-                            <span class="badge bg-danger">
-
-                                HIGH
-
-                            </span>
+                            <span class="badge bg-danger">HIGH</span>
 
                         {% else %}
 
-                            <span class="badge bg-info">
-
-                                {{ pod.risk }}
-
-                            </span>
+                            <span class="badge bg-info">{{ pod.risk }}</span>
 
                         {% endif %}
 
@@ -243,6 +201,27 @@
 
     </div>
 
+    <!-- Falco Alerts -->
+
+    <div class="card shadow mt-5">
+
+        <div class="card-header bg-danger text-white">
+
+            <h4>🚨 Falco Security Alerts</h4>
+
+        </div>
+
+        <div class="card-body">
+
+            <div id="falcoAlerts">
+
+                <p class="text-muted">Loading alerts...</p>
+
+            </div>
+
+        </div>
+
+    </div>
 
     <footer class="text-center mt-5 mb-3">
 
@@ -260,8 +239,116 @@
 
     </footer>
 
-
 </div>
+
+<script>
+
+async function loadFalcoAlerts() {
+
+    try {
+
+        const response = await fetch("/api/falco");
+        const alerts = await response.json();
+
+        const div = document.getElementById("falcoAlerts");
+
+        if (alerts.length === 0) {
+
+            div.innerHTML =
+                "<div class='alert alert-success'>No Security Alerts 🎉</div>";
+
+            return;
+        }
+
+        let html = "";
+
+        alerts.forEach(alert => {
+
+            let badge = "secondary";
+
+            if (alert.priority === "Critical") badge = "dark";
+            else if (alert.priority === "Error") badge = "danger";
+            else if (alert.priority === "Warning") badge = "warning";
+            else if (alert.priority === "Notice") badge = "info";
+
+            html += `
+
+            <div class="card border-danger mb-3">
+
+                <div class="card-header bg-danger text-white">
+
+                    <strong>${alert.rule}</strong>
+
+                </div>
+
+                <div class="card-body">
+
+                    <p>
+
+                        <span class="badge bg-${badge}">
+                            ${alert.priority}
+                        </span>
+
+                    </p>
+
+                    <p>
+
+                        <strong>Time:</strong>
+                        ${alert.time}
+
+                    </p>
+
+                    <p>
+
+                        <strong>Namespace:</strong>
+                        ${alert.output_fields["k8s.ns.name"] || "-"}
+
+                    </p>
+
+                    <p>
+
+                        <strong>Pod:</strong>
+                        ${alert.output_fields["k8s.pod.name"] || "-"}
+
+                    </p>
+
+                    <p>
+
+                        <strong>Container:</strong>
+                        ${alert.output_fields["container.name"] || "-"}
+
+                    </p>
+
+                    <pre class="bg-light p-3 rounded">${alert.output}</pre>
+
+                </div>
+
+            </div>
+
+            `;
+
+        });
+
+        div.innerHTML = html;
+
+    }
+
+    catch(err) {
+
+        console.error(err);
+
+        document.getElementById("falcoAlerts").innerHTML =
+        "<div class='alert alert-danger'>Unable to load Falco alerts.</div>";
+
+    }
+
+}
+
+loadFalcoAlerts();
+
+setInterval(loadFalcoAlerts, 5000);
+
+</script>
 
 </body>
 
