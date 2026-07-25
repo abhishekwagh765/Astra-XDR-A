@@ -95,3 +95,45 @@ jobs:
       - name: Push Docker Image
         run: |
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/astra-xdr:latest
+
+  # ==========================================
+  # STAGE 4: DEPLOY TO KUBERNETES
+  # ==========================================
+  kubernetes-deploy:
+    name: Deploy to Kubernetes
+    needs: push-to-dockerhub
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v4
+
+      - name: Configure kubeconfig
+        run: |
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
+
+      - name: Verify Cluster Connection
+        run: |
+          kubectl cluster-info
+          kubectl get nodes
+
+      - name: Deploy Kubernetes Resources
+        run: |
+          kubectl apply -f k8s/
+
+      - name: Restart Astra-XDR Deployment
+        run: |
+          kubectl rollout restart deployment/astra-xdr -n astra
+
+      - name: Wait for Rollout
+        run: |
+          kubectl rollout status deployment/astra-xdr -n astra --timeout=180s
+
+      - name: Verify Deployment
+        run: |
+          kubectl get pods -n astra
+          kubectl get svc -n astra
