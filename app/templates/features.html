@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block title %}Features | ASTRA-XDR{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <span class="eyebrow-tag reveal-up">Capabilities</span>
+    <h1 class="page-title reveal-up delay-1">What ASTRA-XDR<br class="d-none d-md-block"> actually watches.</h1>
+    <p class="page-lead reveal-up delay-2">
+      Every capability below is live on the dashboard right now — pulled straight from the
+      Kubernetes API, the metrics-server, and Falco's runtime events.
+    </p>
+  </div>
+</section>
+
+<section class="section-block">
+  <div class="container">
+    <div class="row g-4">
+
+      <div class="col-md-6 col-lg-4 reveal">
+        <div class="glass-card feature-card h-100">
+          <div class="card-icon"><i class="fa-solid fa-diagram-project"></i></div>
+          <h3>Cluster Overview</h3>
+          <p>Live counts of nodes, namespaces, pods, and services, read directly from the Kubernetes API via the <code>astra-sa</code> service account.</p>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-4 reveal delay-1">
+        <div class="glass-card feature-card h-100">
+          <div class="card-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+          <h3>Pod Risk Scoring</h3>
+          <p>Every pod is classified LOW, MEDIUM, HIGH, or CRITICAL based on its phase — Running, Pending, Failed, or an unexpected state — with a plain-language reason attached.</p>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-4 reveal delay-2">
+        <div class="glass-card feature-card h-100">
+          <div class="card-icon"><i class="fa-solid fa-shield-halved"></i></div>
+          <h3>Live Falco Alert Feed</h3>
+          <p>Falco posts runtime security events straight to <code>/api/falco/events</code>. The dashboard renders each one with its rule, priority, namespace, pod, container, and raw output.</p>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-4 reveal">
+        <div class="glass-card feature-card h-100">
+          <div class="card-icon"><i class="fa-solid fa-microchip"></i></div>
+          <h3>Node &amp; Pod Metrics</h3>
+          <p>CPU (millicores) and memory (MiB) for every node and pod, sourced from the <code>metrics.k8s.io</code> API and refreshed automatically.</p>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-4 reveal delay-1">
+        <div class="glass-card feature-card h-100">
+          <div class="card-icon"><i class="fa-solid fa-ranking-star"></i></div>
+          <h3>Top CPU &amp; Memory Pods</h3>
+          <p>Pods are automatically ranked by resource consumption, so the noisiest — or most suspicious — workloads surface immediately.</p>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-4 reveal delay-2">
+        <div class="glass-card feature-card h-100">
+          <div class="card-icon"><i class="fa-solid fa-arrows-rotate"></i></div>
+          <h3>Real-Time Auto-Refresh</h3>
+          <p>The dashboard polls cluster state, metrics, and Falco events on a short interval, so what you're looking at stays current without a manual reload.</p>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-4 reveal">
+        <div class="glass-card feature-card h-100">
+          <div class="card-icon"><i class="fa-solid fa-code-branch"></i></div>
+          <h3>Security-Gated CI/CD</h3>
+          <p>Every push runs through SonarCloud SAST and a Trivy container scan — builds with critical or high vulnerabilities are blocked before they ever reach the cluster.</p>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-4 reveal delay-1">
+        <div class="glass-card feature-card h-100">
+          <div class="card-icon"><i class="fa-solid fa-lock"></i></div>
+          <h3>Least-Privilege RBAC</h3>
+          <p>The <code>astra-role</code> ClusterRole grants only read access (get/list/watch) to the exact resources the platform needs — no write access to your cluster.</p>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-4 reveal delay-2">
+        <div class="glass-card feature-card h-100">
+          <div class="card-icon"><i class="fa-solid fa-heart-pulse"></i></div>
+          <h3>Kubernetes-Native Health Checks</h3>
+          <p>A dedicated <code>/health</code> endpoint backs the Deployment's liveness and readiness probes, so Kubernetes manages the platform's own availability.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="cta-band">
+  <div class="container">
+    <div class="cta-band-inner reveal">
+      <div>
+        <h2>See these running on the live cluster.</h2>
+        <p>Open the ASTRA-XDR dashboard, already deployed via <code>k8s/service.yaml</code> on NodePort 30080.</p>
+      </div>
+      <a href="{{ DASHBOARD_URL }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary-glow flex-shrink-0">
+        <i class="fa-solid fa-gauge-high me-2"></i>Launch Dashboard
+      </a>
+    </div>
+  </div>
+</section>
+{% endblock %}

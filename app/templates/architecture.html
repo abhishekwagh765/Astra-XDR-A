@@ -1,0 +1,254 @@
+{% extends "base.html" %}
+{% block title %}Architecture | ASTRA-XDR{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <span class="eyebrow-tag reveal-up">Under the Hood</span>
+    <h1 class="page-title reveal-up delay-1">Architecture, stack, and<br class="d-none d-md-block"> delivery pipeline.</h1>
+    <p class="page-lead reveal-up delay-2">
+      This is the actual deployed architecture — the same namespace, RBAC, and CI/CD stages
+      running in the project's <code>k8s/</code> manifests and <code>.github/workflows/ci.yml</code>.
+    </p>
+    <div class="page-hero-jumplinks reveal-up delay-3">
+      <a href="#architecture-diagram">Architecture</a>
+      <a href="#technologies">Technologies Used</a>
+      <a href="#cicd">CI/CD Pipeline</a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ARCHITECTURE ================= -->
+<section class="section-block" id="architecture-diagram">
+  <div class="container">
+    <div class="section-heading reveal">
+      <span class="eyebrow-tag">Architecture</span>
+      <h2>Three layers, one namespace</h2>
+      <p class="section-lead">
+        Everything runs inside the <code>astra</code> namespace, behind a dedicated
+        <code>astra-sa</code> service account scoped to read-only RBAC.
+      </p>
+    </div>
+
+    <div class="arch-diagram reveal">
+      <div class="arch-layer">
+        <div class="arch-layer-label"><i class="fa-solid fa-satellite-dish"></i> Collection Layer</div>
+        <div class="arch-nodes">
+          <div class="arch-node">Kubernetes API<span>nodes, pods, namespaces, services</span></div>
+          <div class="arch-node">metrics.k8s.io<span>node &amp; pod CPU / memory</span></div>
+          <div class="arch-node">Falco Runtime Events<span>POST /api/falco/events</span></div>
+        </div>
+      </div>
+      <div class="arch-arrow"><i class="fa-solid fa-arrow-down"></i></div>
+      <div class="arch-layer">
+        <div class="arch-layer-label"><i class="fa-solid fa-diagram-project"></i> Correlation &amp; API Layer</div>
+        <div class="arch-nodes">
+          <div class="arch-node">Flask App<span>collectors + detectors</span></div>
+          <div class="arch-node">Pod Risk Detector<span>LOW / MEDIUM / HIGH / CRITICAL</span></div>
+          <div class="arch-node">REST API<span>/api/cluster, /api/pods, /api/dashboard</span></div>
+        </div>
+      </div>
+      <div class="arch-arrow"><i class="fa-solid fa-arrow-down"></i></div>
+      <div class="arch-layer">
+        <div class="arch-layer-label"><i class="fa-solid fa-desktop"></i> Presentation Layer</div>
+        <div class="arch-nodes">
+          <div class="arch-node">ASTRA-XDR Dashboard<span>astra-service · NodePort :30080</span></div>
+          <div class="arch-node">This Website<span>standalone Flask · port :5000</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4 mt-2">
+      <div class="col-md-4 reveal">
+        <div class="glass-card h-100">
+          <div class="card-icon"><i class="fa-solid fa-server"></i></div>
+          <h3>astra-xdr Deployment</h3>
+          <p>Single-replica Deployment in the <code>astra</code> namespace, with CPU/memory requests &amp; limits and liveness/readiness probes on <code>/health</code>.</p>
+        </div>
+      </div>
+      <div class="col-md-4 reveal delay-1">
+        <div class="glass-card h-100">
+          <div class="card-icon"><i class="fa-solid fa-network-wired"></i></div>
+          <h3>astra-service (NodePort)</h3>
+          <p>Exposes container port 5000 externally on node port <code>30080</code> — the same address this site links to.</p>
+        </div>
+      </div>
+      <div class="col-md-4 reveal delay-2">
+        <div class="glass-card h-100">
+          <div class="card-icon"><i class="fa-solid fa-user-shield"></i></div>
+          <h3>astra-sa + RBAC</h3>
+          <p>A dedicated ServiceAccount bound to the <code>astra-role</code> ClusterRole — get/list/watch only, across pods, nodes, workloads, jobs, and metrics.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TECHNOLOGIES USED ================= -->
+<section class="section-block section-alt" id="technologies">
+  <div class="container">
+    <div class="section-heading reveal">
+      <span class="eyebrow-tag">Technologies Used</span>
+      <h2>The actual stack running in production</h2>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-6 col-md-3 reveal">
+        <div class="tech-tile">
+          <i class="fa-brands fa-kubernetes"></i>
+          <span>Kubernetes</span>
+          <small>Orchestration</small>
+        </div>
+      </div>
+      <div class="col-6 col-md-3 reveal delay-1">
+        <div class="tech-tile">
+          <i class="fa-solid fa-shield-halved"></i>
+          <span>Falco</span>
+          <small>Runtime Detection</small>
+        </div>
+      </div>
+      <div class="col-6 col-md-3 reveal delay-2">
+        <div class="tech-tile">
+          <i class="fa-brands fa-python"></i>
+          <span>Flask 3.1</span>
+          <small>Application Layer</small>
+        </div>
+      </div>
+      <div class="col-6 col-md-3 reveal delay-3">
+        <div class="tech-tile">
+          <i class="fa-solid fa-bolt"></i>
+          <span>Flask-SocketIO</span>
+          <small>Real-Time Layer</small>
+        </div>
+      </div>
+      <div class="col-6 col-md-3 reveal">
+        <div class="tech-tile">
+          <i class="fa-solid fa-cubes"></i>
+          <span>Python Kubernetes Client</span>
+          <small>Cluster API Access</small>
+        </div>
+      </div>
+      <div class="col-6 col-md-3 reveal delay-1">
+        <div class="tech-tile">
+          <i class="fa-solid fa-chart-line"></i>
+          <span>Chart.js</span>
+          <small>Metrics Visualization</small>
+        </div>
+      </div>
+      <div class="col-6 col-md-3 reveal delay-2">
+        <div class="tech-tile">
+          <i class="fa-brands fa-docker"></i>
+          <span>Docker</span>
+          <small>Containerization</small>
+        </div>
+      </div>
+      <div class="col-6 col-md-3 reveal delay-3">
+        <div class="tech-tile">
+          <i class="fa-solid fa-gauge-high"></i>
+          <span>Gunicorn + eventlet</span>
+          <small>WSGI Serving</small>
+        </div>
+      </div>
+      <div class="col-6 col-md-3 reveal">
+        <div class="tech-tile">
+          <i class="fa-solid fa-magnifying-glass-chart"></i>
+          <span>SonarCloud</span>
+          <small>SAST / Code Quality</small>
+        </div>
+      </div>
+      <div class="col-6 col-md-3 reveal delay-1">
+        <div class="tech-tile">
+          <i class="fa-solid fa-bug-slash"></i>
+          <span>Trivy</span>
+          <small>Container Vulnerability Scan</small>
+        </div>
+      </div>
+      <div class="col-6 col-md-3 reveal delay-2">
+        <div class="tech-tile">
+          <i class="fa-brands fa-docker"></i>
+          <span>Docker Hub</span>
+          <small>Image Registry</small>
+        </div>
+      </div>
+      <div class="col-6 col-md-3 reveal delay-3">
+        <div class="tech-tile">
+          <i class="fa-brands fa-github"></i>
+          <span>GitHub Actions</span>
+          <small>CI/CD Automation</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CI/CD PIPELINE ================= -->
+<section class="section-block" id="cicd">
+  <div class="container">
+    <div class="section-heading reveal">
+      <span class="eyebrow-tag">CI/CD Pipeline</span>
+      <h2>The exact 4 stages defined in ci.yml</h2>
+      <p class="section-lead">
+        On every push and pull request to <code>main</code>, GitHub Actions runs this pipeline
+        end to end — each stage gated on the one before it.
+      </p>
+    </div>
+
+    <div class="pipeline-track reveal">
+      <div class="pipeline-stage">
+        <div class="pipeline-icon"><i class="fa-solid fa-magnifying-glass-chart"></i></div>
+        <h4>1. SAST Scan</h4>
+        <p>SonarCloud scans the codebase for code quality and security issues before anything is built.</p>
+      </div>
+      <div class="pipeline-connector"></div>
+      <div class="pipeline-stage">
+        <div class="pipeline-icon"><i class="fa-solid fa-bug-slash"></i></div>
+        <h4>2. Build &amp; Trivy Scan</h4>
+        <p>The Docker image is built and scanned by Trivy; the pipeline fails on any CRITICAL or HIGH vulnerability.</p>
+      </div>
+      <div class="pipeline-connector"></div>
+      <div class="pipeline-stage">
+        <div class="pipeline-icon"><i class="fa-brands fa-docker"></i></div>
+        <h4>3. Push to Docker Hub</h4>
+        <p>A passing image is tagged and pushed to <code>mrrobot7781/astra-xdr:latest</code>.</p>
+      </div>
+      <div class="pipeline-connector"></div>
+      <div class="pipeline-stage">
+        <div class="pipeline-icon"><i class="fa-solid fa-rocket"></i></div>
+        <h4>4. Deploy to Kubernetes</h4>
+        <p><code>kubectl apply -f k8s/</code>, then a rollout restart of <code>deployment/astra-xdr</code> in the <code>astra</code> namespace — verified before the run completes.</p>
+      </div>
+    </div>
+
+    <div class="row g-4 mt-2">
+      <div class="col-md-6 reveal">
+        <div class="glass-card h-100">
+          <div class="card-icon"><i class="fa-solid fa-shield-halved"></i></div>
+          <h3>Security gates, not afterthoughts</h3>
+          <p>Both the SonarCloud and Trivy stages can hard-fail the pipeline. A vulnerable or low-quality build never reaches Docker Hub, let alone the cluster.</p>
+        </div>
+      </div>
+      <div class="col-md-6 reveal delay-1">
+        <div class="glass-card h-100">
+          <div class="card-icon"><i class="fa-solid fa-arrows-rotate"></i></div>
+          <h3>Verified rollout</h3>
+          <p>The deploy stage waits on <code>kubectl rollout status</code> with a timeout, then confirms pods and services are healthy in the <code>astra</code> namespace.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-band">
+  <div class="container">
+    <div class="cta-band-inner reveal">
+      <div>
+        <h2>Ready to see it running?</h2>
+        <p>The dashboard reflects this exact architecture live, on your Kubernetes cluster.</p>
+      </div>
+      <a href="{{ DASHBOARD_URL }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary-glow flex-shrink-0">
+        <i class="fa-solid fa-gauge-high me-2"></i>Launch Dashboard
+      </a>
+    </div>
+  </div>
+</section>
+{% endblock %}

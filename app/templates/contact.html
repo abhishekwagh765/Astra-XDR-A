@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Contact | ASTRA-XDR{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <span class="eyebrow-tag reveal-up">Get in Touch</span>
+    <h1 class="page-title reveal-up delay-1">Talk to the ASTRA-XDR team.</h1>
+    <p class="page-lead reveal-up delay-2">
+      Questions about deployment, integrations, or the roadmap? Send us a message and we'll
+      get back to you.
+    </p>
+  </div>
+</section>
+
+<section class="section-block">
+  <div class="container">
+    <div class="row g-5">
+
+      <div class="col-lg-5 reveal">
+        <div class="glass-card contact-info-card h-100">
+          <h3>Contact Information</h3>
+          <ul class="contact-info-list">
+            <li>
+              <i class="fa-solid fa-envelope"></i>
+              <div>
+                <span class="label">Email</span>
+                <span class="value">security@astra-xdr.io</span>
+              </div>
+            </li>
+            <li>
+              <i class="fa-brands fa-github"></i>
+              <div>
+                <span class="label">GitHub</span>
+                <a class="value" href="{{ GITHUB_URL }}" target="_blank" rel="noopener noreferrer">{{ GITHUB_URL }}</a>
+              </div>
+            </li>
+            <li>
+              <i class="fa-solid fa-book"></i>
+              <div>
+                <span class="label">Documentation</span>
+                <a class="value" href="{{ DOCS_URL }}" target="_blank" rel="noopener noreferrer">{{ DOCS_URL }}</a>
+              </div>
+            </li>
+            <li>
+              <i class="fa-solid fa-gauge-high"></i>
+              <div>
+                <span class="label">Live Dashboard</span>
+                <a class="value" href="{{ DASHBOARD_URL }}" target="_blank" rel="noopener noreferrer">Open dashboard &rarr;</a>
+              </div>
+            </li>
+          </ul>
+
+          <div class="contact-response-note">
+            <i class="fa-solid fa-clock me-2"></i> We typically respond within 1–2 business days.
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-7 reveal delay-1">
+        <div class="glass-card contact-form-card">
+          <h3>Send a message</h3>
+          <form method="POST" action="{{ url_for('contact') }}" novalidate>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label for="name" class="form-label">Full name</label>
+                <input type="text" class="form-control astra-input" id="name" name="name" placeholder="Jane Doe" required>
+              </div>
+              <div class="col-md-6">
+                <label for="email" class="form-label">Work email</label>
+                <input type="email" class="form-control astra-input" id="email" name="email" placeholder="jane@company.com" required>
+              </div>
+              <div class="col-12">
+                <label for="company" class="form-label">Company <span class="text-muted">(optional)</span></label>
+                <input type="text" class="form-control astra-input" id="company" name="company" placeholder="Company name">
+              </div>
+              <div class="col-12">
+                <label for="message" class="form-label">Message</label>
+                <textarea class="form-control astra-input" id="message" name="message" rows="5" placeholder="Tell us what you're looking to secure..." required></textarea>
+              </div>
+              <div class="col-12">
+                <button type="submit" class="btn btn-primary-glow w-100 w-md-auto">
+                  <i class="fa-solid fa-paper-plane me-2"></i>Send Message
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+{% endblock %}

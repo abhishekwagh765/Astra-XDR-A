@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block title %}About | ASTRA-XDR{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <span class="eyebrow-tag reveal-up">About the Platform</span>
+    <h1 class="page-title reveal-up delay-1">Built for teams who run security<br class="d-none d-md-block"> at Kubernetes speed.</h1>
+    <p class="page-lead reveal-up delay-2">
+      ASTRA-XDR started as an answer to a simple frustration: cloud-native environments generate
+      an overwhelming amount of security telemetry, and most of it never reaches the people who
+      need it in time to act.
+    </p>
+  </div>
+</section>
+
+<section class="section-block">
+  <div class="container">
+    <div class="row g-5 align-items-center">
+      <div class="col-lg-6 reveal">
+        <span class="eyebrow-tag">Our Mission</span>
+        <h2>Close the gap between detection and response.</h2>
+        <p class="text-body">
+          Modern infrastructure is ephemeral, distributed, and fast-moving — containers spin up
+          and disappear in seconds, workloads scale across nodes, and attack surfaces shift
+          constantly. Traditional, siloed security tooling simply wasn't designed for this.
+        </p>
+        <p class="text-body">
+          ASTRA-XDR runs natively inside its own <code>astra</code> namespace, reading cluster
+          state through a read-only service account, scoring pod health in real time, and
+          surfacing Falco's runtime alerts the moment they're posted — all in one dashboard,
+          not five.
+        </p>
+      </div>
+      <div class="col-lg-6 reveal delay-1">
+        <div class="glass-card stat-panel">
+          <div class="stat-panel-row">
+            <div class="stat-panel-item">
+              <span class="stat-panel-num">100%</span>
+              <span class="stat-panel-label">Kubernetes-Native</span>
+            </div>
+            <div class="stat-panel-item">
+              <span class="stat-panel-num">3</span>
+              <span class="stat-panel-label">Detection Layers</span>
+            </div>
+          </div>
+          <div class="stat-panel-row">
+            <div class="stat-panel-item">
+              <span class="stat-panel-num">24/7</span>
+              <span class="stat-panel-label">Runtime Coverage</span>
+            </div>
+            <div class="stat-panel-item">
+              <span class="stat-panel-num">1</span>
+              <span class="stat-panel-label">Unified Console</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-block section-alt">
+  <div class="container">
+    <div class="section-heading reveal">
+      <span class="eyebrow-tag">What We Believe</span>
+      <h2>Principles behind the platform</h2>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-4 reveal">
+        <div class="glass-card h-100">
+          <div class="card-icon"><i class="fa-solid fa-eye"></i></div>
+          <h3>Visibility first</h3>
+          <p>Cluster state, node/pod metrics, and Falco's runtime output are all pulled live — nothing is simulated or cached stale.</p>
+        </div>
+      </div>
+      <div class="col-md-4 reveal delay-1">
+        <div class="glass-card h-100">
+          <div class="card-icon"><i class="fa-solid fa-lock"></i></div>
+          <h3>Least privilege, always</h3>
+          <p>The <code>astra-role</code> ClusterRole is get/list/watch only. ASTRA-XDR observes your cluster; it never mutates it.</p>
+        </div>
+      </div>
+      <div class="col-md-4 reveal delay-2">
+        <div class="glass-card h-100">
+          <div class="card-icon"><i class="fa-solid fa-cubes-stacked"></i></div>
+          <h3>Security gates in CI, not after</h3>
+          <p>SonarCloud and Trivy run before every deploy — a build with a critical vulnerability simply doesn't ship.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-band">
+  <div class="container">
+    <div class="cta-band-inner reveal">
+      <div>
+        <h2>Want the technical deep-dive?</h2>
+        <p>See exactly how detection, correlation, and the CI/CD pipeline fit together.</p>
+      </div>
+      <a href="{{ url_for('architecture') }}" class="btn btn-primary-glow flex-shrink-0">
+        <i class="fa-solid fa-diagram-project me-2"></i>View Architecture
+      </a>
+    </div>
+  </div>
+</section>
+{% endblock %}

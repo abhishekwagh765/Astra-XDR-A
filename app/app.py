@@ -1,11 +1,25 @@
+from datetime import datetime
 from flask import Flask, render_template, request, jsonify
-
 from collectors.cluster import get_cluster_info
 from collectors.pods import get_all_pods
 from collectors.metrics import get_node_metrics, get_pod_metrics
 from detectors.pod_health import calculate_risk
 
 app = Flask(__name__)
+
+DASHBOARD_URL = "http://54.83.90.238:30080"
+GITHUB_URL = "https://github.com/mrrobot7781/Astra-XDR"
+DOCS_URL = "https://github.com/mrrobot7781/Astra-XDR"
+
+@app.context_processor
+def inject_globals():
+    return {
+        "DASHBOARD_URL": DASHBOARD_URL,
+        "GITHUB_URL": GITHUB_URL,
+        "DOCS_URL": DOCS_URL,
+        "CURRENT_YEAR": datetime.now().year,
+    }
+
 
 # -----------------------------
 # In-memory Falco alert storage
@@ -14,9 +28,25 @@ falco_events = []
 
 
 # -----------------------------
+# Landing Website
+# -----------------------------
+#@app.route("/")
+#def home():
+#    return render_template(
+#       "landing.html",
+#        DASHBOARD_URL="http://54.83.90.238:30080",
+#        GITHUB_URL="https://github.com/mrrobot7781/Astra-XDR",
+#        DOCS_URL="https://github.com/mrrobot7781/Astra-XDR",
+#    )
+
+@app.route("/")
+def home():
+    return render_template("landing.html", active="home")
+
+# -----------------------------
 # Dashboard
 # -----------------------------
-@app.route("/")
+@app.route("/dashboard")
 def dashboard():
 
     cluster = get_cluster_info()
@@ -38,6 +68,28 @@ def dashboard():
         node_metrics=node_metrics,
         pod_metrics=pod_metrics,
     )
+
+
+# -----------------------------
+# Website Pages
+# -----------------------------
+@app.route("/about")
+def about():
+    return render_template("about.html", active="about")
+
+@app.route("/features")
+def features():
+    return render_template("features.html", active="features")
+
+
+@app.route("/architecture")
+def architecture():
+    return render_template("architecture.html", active="architecture")
+
+
+@app.route("/contact")
+def contact():
+    return render_template("contact.html", active="contact")
 
 
 # -----------------------------
