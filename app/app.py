@@ -7,7 +7,7 @@ from detectors.pod_health import calculate_risk
 
 app = Flask(__name__)
 
-DASHBOARD_URL = "http://54.83.90.238:30080"
+DASHBOARD_URL = "http://54.83.90.238:30080/dashboard"
 GITHUB_URL = "https://github.com/mrrobot7781/Astra-XDR"
 DOCS_URL = "https://github.com/mrrobot7781/Astra-XDR"
 
