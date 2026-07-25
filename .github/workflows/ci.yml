@@ -12,23 +12,17 @@ on:
 jobs:
 
   # ==========================================
-  # STAGE 1: SONARCLOUD CODE QUALITY & SECURITY
+  # STAGE 1: CODE QUALITY & SECURITY (SONARCLOUD)
   # ==========================================
   sonarcloud:
-    name: SonarCloud Scan
+    name: Code Quality & Security Scan (SAST)
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout Source Code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: "17"
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -41,14 +35,10 @@ jobs:
           pip install -r app/requirements.txt
 
       - name: SonarCloud Scan
-        uses: SonarSource/sonarqube-scan-action@v5
+        uses: sonarsource/sonarqube-scan-action@v6
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          args: >
-            -Dsonar.projectKey=mrrobot7781_Astra-XDR
-            -Dsonar.organization=mrrobot7781
-            -Dsonar.sources=app
 
   # ==========================================
   # STAGE 2: BUILD DOCKER IMAGE & TRIVY SCAN
@@ -67,7 +57,7 @@ jobs:
           docker build -t astra-xdr:latest ./app
 
       - name: Run Trivy Vulnerability Scanner
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@0.33.1
         with:
           image-ref: astra-xdr:latest
           format: table
