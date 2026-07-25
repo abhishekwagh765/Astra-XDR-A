@@ -6,39 +6,68 @@ body{
 
 .navbar{
     background:#161b22 !important;
+    border-bottom:1px solid #30363d;
+}
+
+.navbar-brand{
+    letter-spacing:.5px;
+    background:linear-gradient(90deg,#00d4ff,#00e676);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
 }
 
 .metric-card{
-    background:#161b22;
+    position:relative;
+    background:linear-gradient(160deg,#161b22 0%,#12161c 100%);
     border:1px solid #30363d;
     border-radius:16px;
-    padding:25px;
-    transition:.3s;
+    padding:22px 25px;
+    transition:.25s ease;
     box-shadow:0 0 15px rgba(0,212,255,.08);
+    overflow:hidden;
+}
+
+.metric-card::before{
+    content:"";
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:3px;
+    background:linear-gradient(90deg,#00d4ff,#00e676);
+    opacity:.8;
 }
 
 .metric-card:hover{
-    transform:translateY(-5px);
-    box-shadow:0 0 25px rgba(0,212,255,.25);
+    transform:translateY(-6px);
+    border-color:#00d4ff55;
+    box-shadow:0 8px 25px rgba(0,212,255,.25);
 }
 
 .metric-card h6{
     color:#8b949e;
     text-transform:uppercase;
-    font-size:13px;
-    letter-spacing:1px;
+    font-size:12px;
+    letter-spacing:1.5px;
+    margin-bottom:4px;
 }
 
 .metric-card h2{
     color:#00d4ff;
     font-weight:700;
-    margin-top:10px;
+    margin-top:8px;
+    font-size:2rem;
+}
+
+.metric-card small{
+    color:#6e7681;
 }
 
 .chart-card,
 .table-card{
 
-    background:#161b22;
+    background:linear-gradient(180deg,#161b22 0%,#141920 100%);
 
     border:1px solid #30363d;
 
@@ -52,13 +81,42 @@ body{
 
 .chart-card{
 
-    height:420px;
+    height:380px;
+
+    display:flex;
+
+    flex-direction:column;
 
 }
 
-.chart-card canvas{
+/* THE FIX: chart-wrap is a fixed-height, position:relative box.
+   Chart.js (responsive:true, maintainAspectRatio:false) fills THIS box
+   exactly instead of stretching the canvas based on its own content. */
+.chart-wrap{
 
-    max-height:320px;
+    position:relative;
+
+    flex:1 1 auto;
+
+    width:100%;
+
+    height:100%;
+
+    min-height:0;
+
+}
+
+.chart-wrap canvas{
+
+    position:absolute;
+
+    top:0;
+
+    left:0;
+
+    width:100% !important;
+
+    height:100% !important;
 
 }
 
@@ -178,11 +236,37 @@ h5{
 
     border-radius:12px;
 
-    padding:15px;
+    padding:15px 18px;
 
     margin-bottom:15px;
 
     border-left:5px solid #ff4d6d;
+
+    transition:.2s;
+
+}
+
+.alert-item:hover{
+
+    background:#12161d;
+
+    transform:translateX(3px);
+
+}
+
+.alert-item h5{
+
+    margin-bottom:8px;
+
+    font-size:1.05rem;
+
+}
+
+.alert-item p{
+
+    margin-bottom:6px;
+
+    color:#c9d1d9;
 
 }
 
@@ -208,4 +292,64 @@ h5{
 
     font-weight:bold;
 
+}
+
+/* ==============================
+   FALCO ALERTS
+============================== */
+.falco-card{
+    background:#161b22;
+    border-radius:15px;
+    padding:20px;
+    margin-bottom:20px;
+    transition:.25s;
+    box-shadow:0 8px 25px rgba(0,0,0,.35);
+}
+.falco-card:hover{
+    transform:translateY(-4px);
+    box-shadow:0 10px 35px rgba(0,212,255,.15);
+}
+.falco-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+.falco-top h5{
+    color:white;
+    margin:0;
+}
+.falco-top small{
+    color:#8b949e;
+}
+.falco-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:15px;
+    margin-bottom:20px;
+}
+.falco-grid div{
+    background:#0d1117;
+    border-radius:10px;
+    padding:15px;
+}
+.falco-grid span{
+    display:block;
+    color:#8b949e;
+    margin-bottom:5px;
+    font-size:13px;
+}
+.falco-grid strong{
+    color:#00d4ff;
+}
+.falco-output{
+    background:#0b1220;
+    color:#dbe4ee;
+    border-radius:10px;
+    padding:18px;
+    font-family:monospace;
+    white-space:pre-wrap;
+    overflow-wrap:anywhere;
+    line-height:1.6;
+    border:1px solid #30363d;
 }

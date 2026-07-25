@@ -91,79 +91,103 @@ async function loadFalcoAlerts() {
 
         const div = document.getElementById("falcoAlerts");
 
-        if (alerts.length === 0) {
+        // Show only Critical, High and Error alerts
+        const filteredAlerts = alerts.filter(alert =>
+            ["Critical", "High", "Error"].includes(alert.priority)
+        );
 
-            div.innerHTML =
-                "<div class='alert alert-success'>✅ No Security Alerts</div>";
+        // Update alert counter
+        document.getElementById("alertCount").innerText = filteredAlerts.length;
+
+        if (filteredAlerts.length === 0) {
+
+            div.innerHTML = `
+                <div class="alert alert-success text-center p-4">
+                    <h5>✅ No Critical / High / Error Alerts</h5>
+                    <small>Your Kubernetes cluster looks secure.</small>
+                </div>
+            `;
 
             return;
-
         }
 
         let html = "";
 
-        alerts.forEach(alert => {
+        filteredAlerts
+            .slice(-10)      // Show only latest 10 alerts
+            .reverse()
+            .forEach(alert => {
 
-            let color = "card-info";
+                const fields = alert.output_fields || {};
 
-            if (alert.priority === "Critical")
-                color = "card-danger";
+                const namespace = fields["k8s.ns.name"] || "-";
+                const pod = fields["k8s.pod.name"] || "-";
+                const container = fields["container.name"] || "-";
 
-            else if (alert.priority === "Warning")
-                color = "card-warning";
+                let color = "card-danger";
+                let badge = "bg-danger";
 
-            else if (alert.priority === "Notice")
-                color = "card-info";
+                if (alert.priority === "High") {
 
-            html += `
+                    color = "card-warning";
+                    badge = "bg-warning text-dark";
 
-            <div class="alert-item ${color}">
+                }
 
-                <h5>${alert.rule}</h5>
+                if (alert.priority === "Error") {
 
-                <span class="badge bg-danger">
+                    color = "card-info";
+                    badge = "bg-info";
 
-                    ${alert.priority}
+                }
 
-                </span>
+                html += `
 
-                <hr>
+                <div class="alert-item ${color}">
 
-                <p>
+                    <div class="d-flex justify-content-between align-items-center">
 
-                    <b>Namespace :</b>
+                        <h5 class="mb-0">
+                            🚨 ${alert.rule}
+                        </h5>
 
-                    ${alert.output_fields["k8s.ns.name"] || "-"}
+                        <span class="badge ${badge}">
+                            ${alert.priority}
+                        </span>
 
-                </p>
+                    </div>
 
-                <p>
+                    <small class="text-secondary">
 
-                    <b>Pod :</b>
+                        ${alert.time ? new Date(alert.time).toLocaleString() : ""}
 
-                    ${alert.output_fields["k8s.pod.name"] || "-"}
+                    </small>
 
-                </p>
+                    <hr>
 
-                <p>
+                    <p>
+                        <b>📦 Namespace :</b> ${namespace}
+                    </p>
 
-                    <b>Container :</b>
+                    <p>
+                        <b>☸ Pod :</b> ${pod}
+                    </p>
 
-                    ${alert.output_fields["container.name"] || "-"}
+                    <p>
+                        <b>🐳 Container :</b> ${container}
+                    </p>
 
-                </p>
-
-                <pre>
+                    <pre>
 
 ${alert.output}
 
-                </pre>
+                    </pre>
 
-            </div>
+                </div>
 
-            `;
+                `;
 
-        });
+            });
 
         div.innerHTML = html;
 
@@ -171,7 +195,7 @@ ${alert.output}
 
     catch (err) {
 
-        console.error(err);
+        console.error("Falco Error:", err);
 
     }
 
